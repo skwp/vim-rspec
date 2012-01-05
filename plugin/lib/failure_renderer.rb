@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class FailureRenderer
   include StringUtil
 
@@ -21,7 +22,7 @@ class FailureRenderer
   end
 
   def failure_message
-    indent(unescape((@failure/"div[@class='message']/pre").inner_html.gsub(/\n/,'').gsub(/\s+/,' ')))
+    indent(unescape((@failure/"div[@class~='message']/pre").inner_html.gsub(/\n/,'').gsub(/\s+/,' ')))
   end
 
   def backtrace_details
@@ -36,7 +37,11 @@ class FailureRenderer
   end
 
   def backtrace_lines
-    (@failure/"pre[@class='ruby']/code").inner_html.scan(/(<span class="linenum">)(\d+)(<\/span>)(.*)/)
+    (@failure/"pre[@class='ruby']/code").inner_html.scan(/(<span class="linenum">)(\d+)(<\/span>)(.*)/).reject { |line| line[3] =~ ignore_line_if_matches }
+  end
+
+  def ignore_line_if_matches
+    /install syntax to get syntax highlighting/
   end
 
 end

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require "rubygems"
 require "hpricot"
 require 'cgi'
@@ -25,6 +26,7 @@ class RSpecOutputHandler
     stats.map! do |script|
       script.inner_html.scan(/".*"/).first.gsub(/<\/?strong>/,"").gsub(/\"/,'')
     end
+    # results in ["Finished in 0.00482 seconds", "2 examples, 1 failure"]
     failure_success_messages,other_stats = stats.partition {|stat| stat =~ /failure/}
     render_red_green_header(failure_success_messages.first)
     other_stats.each do |stat|
@@ -51,7 +53,7 @@ class RSpecOutputHandler
   end
 
   def render_examples
-    (@doc/"div[@class='example_group']").each do |context|
+    (@doc/"div[@class~='example_group']").each do |context|
       RSpecContextRenderer.new(context, @counts)
     end
   end
