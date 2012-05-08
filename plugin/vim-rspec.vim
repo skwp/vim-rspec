@@ -114,6 +114,13 @@ function! s:RunSpecMain(type)
       call s:error_msg("Seems ".l:bufn." is not a *_spec.rb file")
       return
     end
+  elseif a:type=="rerun"
+    if exists("s:spec")
+      let l:spec = s:spec
+    else
+      call s:error_msg("No rspec run to repeat")
+      return
+    end
   else
     let l:dir = expand("%:p:h")
     if isdirectory(l:dir."/spec")>0
@@ -144,6 +151,7 @@ function! s:RunSpecMain(type)
     let l:spec = s:fetch("RspecBin", "spec") . s:fetch("RspecOpts", "")
     let l:spec = l:spec . " -f h " . l:dir . " -p **/*_spec.rb"
   end
+  let s:spec = l:spec
 
   " run the spec command
   let s:cmd  = l:spec." | ".l:filter
@@ -212,7 +220,12 @@ function! RunSpecs()
   call s:RunSpecMain("dir")
 endfunction
 
+function! RerunSpec()
+  call s:RunSpecMain("rerun")
+endfunction
+
 command! RunSpec  call RunSpec()
+command! RerunSpec  call RerunSpec()
 command! RunSpecs  call RunSpecs()
 command! RunSpecLine  call RunSpecLine()
 
@@ -221,4 +234,6 @@ if g:RspecKeymap==1
   nmap <D-R> :RunSpec<CR>
   " Cmd-Shift-L for RSpec Current Line
   nmap <D-L> :RunSpecLine<CR>
+  " Cmd-Shift-E for RSpec previous spec
+  nmap <D-E> :RerunSpec<CR>
 endif
