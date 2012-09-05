@@ -164,7 +164,7 @@ function! s:RunSpecMain(type)
   silent exec "nnoremap <buffer> <cr> :call <SID>TryToOpen()<cr>"
   silent exec 'nnoremap <silent> <buffer> n /\/.*spec.*\:<cr>:call <SID>TryToOpen()<cr>'
   silent exec 'nnoremap <silent> <buffer> N ?/\/.*spec.*\:<cr>:call <SID>TryToOpen()<cr>'
-  silent exec "nnoremap <buffer> q :q<CR>"
+  silent exec "nnoremap <buffer> q :q<CR>:wincmd p<CR>"
   setl nolist
   setl foldmethod=expr
   setl foldexpr=getline(v:lnum)=~'^\+'
