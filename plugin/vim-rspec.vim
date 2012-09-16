@@ -23,7 +23,10 @@ if !exists("g:RspecKeymap")
 end
 
 function! s:find_hpricot()
-  return system("gem search -i hpricot")
+  return system("( gem search -i hpricot &> /dev/null && echo true )
+              \ || ( dpkg-query -Wf'${db:Status-abbrev}' ruby-hpricot 2>/dev/null
+              \     | grep -q '^i' && echo true )
+              \ || echo false")
 endfunction
 
 function! s:error_msg(msg)
