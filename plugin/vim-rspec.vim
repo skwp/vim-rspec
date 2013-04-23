@@ -7,7 +7,7 @@
 " URL: git://github.com/taq/vim-rspec
 "
 " Script to run the spec command inside Vim
-" To install, unpack the files on your ~/.vim directory and source it 
+" To install, unpack the files on your ~/.vim directory and source it
 "
 " The following options can be set/overridden in your .vimrc
 "   * g:RspecRBFilePath      :: Path to vim-rspec.rb
@@ -151,7 +151,7 @@ function! s:RunSpecMain(type)
       call s:error_msg("Could not find the ".l:dir." directory.")
       return
     end
-    let l:spec = s:fetch("RspecBin", "spec") . s:fetch("RspecOpts", "")
+    let l:spec = s:fetch("RspecBin", l:default_cmd) . s:fetch("RspecOpts", "")
     let l:spec = l:spec . " -f h " . l:dir . " -p **/*_spec.rb"
   end
   let s:spec = l:spec
