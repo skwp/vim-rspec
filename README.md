@@ -1,10 +1,5 @@
 vim-rspec
 
-Use vim-ruby-conque instead
-------
-NOTE: Please look at [vim-ruby-conque](https://github.com/skwp/vim-ruby-conque) for a plugin that
-runs in the background, uses ConqueTerm, colorizes, and is generally less quirky than this one.
-
 ABOUT
 ------
 Beautiful, colorized RSpec tests in Vim with direct access to
