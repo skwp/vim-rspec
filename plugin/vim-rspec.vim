@@ -70,7 +70,7 @@ function! s:createOutputWin()
 endfunction
 
 function! s:RunSpecMain(type)
-  let l:bufn = bufname("%")
+  let l:bufn = expand("%:p")
   let s:SpecFile = l:bufn
 
   if len(s:hpricot_cmd)<1
