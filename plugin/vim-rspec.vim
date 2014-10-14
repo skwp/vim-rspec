@@ -53,9 +53,11 @@ function! s:createOutputWin()
   if !exists("g:RspecSplitHorizontal")
     let g:RspecSplitHorizontal=1
   endif
-
+  if !exists("g:RspecSplitSize")
+    let g:RspecSplitSize=15
+  endif
   let splitLocation = "botright "
-  let splitSize = 15
+  let splitSize = g:RspecSplitSize
 
   if bufexists('RSpecOutput')
     silent! bw! RSpecOutput
