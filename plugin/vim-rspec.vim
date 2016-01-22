@@ -20,11 +20,13 @@ if !exists("g:RspecKeymap")
   let g:RspecKeymap=1
 end
 
+runtime! plugin/sources/helpers.vim
+
 function! s:RunSpecMain(type)
   let l:bufn = expand("%:p")
   let s:SpecFile = l:bufn
 
-  call s:check_nokogiri()
+  call g:CheckNokogiri()
 
   " find the installed rspec command
   let l:default_cmd = ""
@@ -35,42 +37,42 @@ function! s:RunSpecMain(type)
   end
 
   " filter
-  let l:filter = "ruby ". s:fetch("RspecRBPath", s:helper_dir."/vim-rspec.rb")
+  let l:filter = "ruby ". g:FetchVar("RspecRBPath", s:helper_dir."/vim-rspec.rb")
 
   " run just the current file
   if a:type=="file"
     if match(l:bufn,'_spec.rb')>=0
-      call s:notice_msg("Running " . s:SpecFile . "...")
-      let l:spec_bin = s:fetch("RspecBin",l:default_cmd)
-      let l:spec_opts = s:fetch("RspecOpts", "")
+      call g:NoticeMsg("Running " . s:SpecFile . "...")
+      let l:spec_bin = g:FetchVar("RspecBin",l:default_cmd)
+      let l:spec_opts = g:FetchVar("RspecOpts", "")
       let l:spec = l:spec_bin . " " . l:spec_opts . " -f h " . l:bufn
     else
-      call s:error_msg("Seems ".l:bufn." is not a *_spec.rb file")
+      call g:ErrorMsg("Seems ".l:bufn." is not a *_spec.rb file")
       return
     end
   elseif a:type=="line"
     if match(l:bufn,'_spec.rb')>=0
       let l:current_line = line('.')
 
-      call s:notice_msg("Running Line " . l:current_line . " on " . s:SpecFile . " ")
-      let l:spec_bin = s:fetch("RspecBin",l:default_cmd)
-      let l:spec_opts = s:fetch("RspecOpts", "")
+      call g:NoticeMsg("Running Line " . l:current_line . " on " . s:SpecFile . " ")
+      let l:spec_bin = g:FetchVar("RspecBin",l:default_cmd)
+      let l:spec_opts = g:FetchVar("RspecOpts", "")
       let l:spec = l:spec_bin . " " . l:spec_opts . " -l " . l:current_line . " -f h " . l:bufn
     else
-      call s:error_msg("Seems ".l:bufn." is not a *_spec.rb file")
+      call g:ErrorMsg("Seems ".l:bufn." is not a *_spec.rb file")
       return
     end
   elseif a:type=="rerun"
     if exists("s:spec")
       let l:spec = s:spec
     else
-      call s:error_msg("No rspec run to repeat")
+      call g:ErrorMsg("No rspec run to repeat")
       return
     end
   else
     let l:dir = expand("%:p:h")
     if isdirectory(l:dir."/spec")>0
-      call s:notice_msg("Running spec on the spec directory ...")
+      call g:NoticeMsg("Running spec on the spec directory ...")
     else
       " try to find a spec directory on the current path
       let l:tokens = split(l:dir,"/")
@@ -84,17 +86,17 @@ function! s:RunSpecMain(type)
         end
       endfor
       if len(l:dir)>0
-        call s:notice_msg("Running spec with on the spec directory found (".l:dir.") ...")
+        call g:NoticeMsg("Running spec with on the spec directory found (".l:dir.") ...")
       else
-        call s:error_msg("No ".l:dir."/spec directory found")
+        call g:ErrorMsg("No ".l:dir."/spec directory found")
         return
       end
     end
     if isdirectory(l:dir)<0
-      call s:error_msg("Could not find the ".l:dir." directory.")
+      call g:ErrorMsg("Could not find the ".l:dir." directory.")
       return
     end
-    let l:spec = s:fetch("RspecBin", l:default_cmd) . s:fetch("RspecOpts", "")
+    let l:spec = g:FetchVar("RspecBin", l:default_cmd) . g:FetchVar("RspecOpts", "")
     let l:spec = l:spec . " -f h " . l:dir . " -p **/*_spec.rb"
   end
   let s:spec = l:spec
@@ -120,7 +122,7 @@ function! s:RunSpecMain(type)
 endfunction
 
 function! s:createOutputWin()
-  let isSplitHorizontal = s:fetch("RspecSplitHorizontal", 1)
+  let isSplitHorizontal = g:FetchVar("RspecSplitHorizontal", 1)
   let splitDirCommand = isSplitHorizontal == 1 ? 'new' : 'vnew'
 
   let splitLocation = "botright "
@@ -155,7 +157,7 @@ function! s:TryToOpen()
   call search("_spec","bcW")
   let l:line = getline(".")
   if match(l:line,'^  .*_spec.rb')<0
-    call s:error_msg("No spec file found.")
+    call g:ErrorMsg("No spec file found.")
     return
   end
   let l:tokens = split(l:line,":")
@@ -167,40 +169,6 @@ function! s:TryToOpen()
   " that was already open, or in the current win
   exec "e ".substitute(l:tokens[0],'/^\s\+',"","")
   call cursor(l:tokens[1],1)
-endfunction
-
-"==============
-" Checks `nokogiri` gem availability
-function! s:check_nokogiri()
-  let s:nokogiri = s:find_nokogiri()
-  let s:nokogiri = match(s:nokogiri,'true') >= 0
-  if !s:nokogiri
-    throw("You need the `nokogiri` gem to run this script.")
-  end
-endfunction
-
-function! s:find_nokogiri()
-  return system("( gem search -i nokogiri &> /dev/null && echo true )")
-endfunction
-
-function! s:error_msg(msg)
-  echohl ErrorMsg
-  echo a:msg
-  echohl None
-endfunction
-
-function! s:notice_msg(msg)
-  echohl MoreMsg
-  echo a:msg
-  echohl None
-endfunction
-
-function! s:fetch(varname, default)
-  if exists("g:".a:varname)
-    return eval("g:".a:varname)
-  else
-    return a:default
-  endif
 endfunction
 
 function! RunSpec()
