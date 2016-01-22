@@ -14,9 +14,27 @@ HISTORY
 
 INSTALL
 -------
- * Requires: gem install hpricot
- * Install with pathogen: clone/submodule into vim/bundle
- * **rbenv** users will need to install hpricot using system ruby `RBENV_VERSION=system sudo gem install hpricot`
+
+# External dependencies
+
+Because of ending of `hpricot` gem maintenance was made decision about moving into `nokogiri`. So this gem is required for `vim-rspec` work.
+You may install it manually by run `gem install nokogiri` or go into plugin folder and run `bundle`.
+
+# VIM plugin managers
+
+## Pathogen
+Install with pathogen: clone/submodule into vim/bundle
+
+## VIM-PLUG
+Added into `~/.vimrc` the following line:
+
+```
+call plug#begin('~/.vim/plugged')
+
+Plug 'alterego-labs/vim-rspec'
+
+call plug#end()
+```
 
 USAGE
 -----
