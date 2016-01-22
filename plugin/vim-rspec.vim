@@ -16,11 +16,13 @@
 "   * g:RspecSplitHorizontal :: Set to 0 to cause Vertical split (default:1)
 
 let s:helper_dir = expand("<sfile>:h")
+
 if !exists("g:RspecKeymap")
   let g:RspecKeymap=1
 end
 
 runtime! plugin/sources/helpers.vim
+runtime! plugin/sources/win_cmd.vim
 
 function! s:RunSpecMain(type)
   let l:bufn = expand("%:p")
@@ -105,7 +107,7 @@ function! s:RunSpecMain(type)
   let s:cmd  = l:spec." | ".l:filter
 
   "put the result on a new buffer
-  call s:createOutputWin()
+  call g:CreateOutputWin()
   setl buftype=nofile
   silent exec "r! ".s:cmd
   setl syntax=vim-rspec
@@ -118,57 +120,6 @@ function! s:RunSpecMain(type)
   setl foldexpr=getline(v:lnum)=~'^\+'
   setl foldtext=\"+--\ \".string(v:foldend-v:foldstart+1).\"\ passed\ \"
   call cursor(1,1)
-
-endfunction
-
-function! s:createOutputWin()
-  let isSplitHorizontal = g:FetchVar("RspecSplitHorizontal", 1)
-  let splitDirCommand = isSplitHorizontal == 1 ? 'new' : 'vnew'
-
-  let splitLocation = "botright "
-  let splitSize = 15
-
-  if bufexists('RSpecOutput')
-    silent! bw! RSpecOutput
-  end
-
-  silent! exec splitLocation . ' ' . splitSize .  ' ' . splitDirCommand
-  silent! exec "edit RSpecOutput"
-endfunction
-
-function! s:FindWindowByBufferName(buffername)
-  let l:windowNumberToBufnameList = map(range(1, winnr('$')), '[v:val, bufname(winbufnr(v:val))]')
-  let l:arrayIndex = match(l:windowNumberToBufnameList, a:buffername)
-  let l:windowNumber = windowNumberToBufnameList[l:arrayIndex][0]
-  return l:windowNumber
-endfunction
-
-function! s:SwitchToWindowNumber(number)
-  exe a:number . "wincmd w"
-endfunction
-
-function! s:SwitchToWindowByName(buffername)
-  let l:windowNumber = s:FindWindowByBufferName(a:buffername)
-  call s:SwitchToWindowNumber(l:windowNumber)
-endfunction
-
-function! s:TryToOpen()
-  " Search up to find '*_spec.rb'
-  call search("_spec","bcW")
-  let l:line = getline(".")
-  if match(l:line,'^  .*_spec.rb')<0
-    call g:ErrorMsg("No spec file found.")
-    return
-  end
-  let l:tokens = split(l:line,":")
-
-  " move back to the other window, if available
-  call s:SwitchToWindowByName(s:SpecFile)
-
-  " open the file in question (either in the split)
-  " that was already open, or in the current win
-  exec "e ".substitute(l:tokens[0],'/^\s\+',"","")
-  call cursor(l:tokens[1],1)
 endfunction
 
 function! RunSpec()
