@@ -15,73 +15,16 @@
 "   * g:RspecOpts            :: Opts to send to rspec call
 "   * g:RspecSplitHorizontal :: Set to 0 to cause Vertical split (default:1)
 
-let s:hpricot_cmd    = ""
-let s:hpricot      = 0
 let s:helper_dir = expand("<sfile>:h")
 if !exists("g:RspecKeymap")
   let g:RspecKeymap=1
 end
 
-function! s:find_hpricot()
-  return system("( gem search -i hpricot &> /dev/null && echo true )
-              \ || ( dpkg-query -Wf'${db:Status-abbrev}' ruby-hpricot 2>/dev/null
-              \     | grep -q '^i' && echo true )
-              \ || echo false")
-endfunction
-
-function! s:error_msg(msg)
-  echohl ErrorMsg
-  echo a:msg
-  echohl None
-endfunction
-
-function! s:notice_msg(msg)
-  echohl MoreMsg
-  echo a:msg
-  echohl None
-endfunction
-
-function! s:fetch(varname, default)
-  if exists("g:".a:varname)
-    return eval("g:".a:varname)
-  else
-    return a:default
-  endif
-endfunction
-
-function! s:createOutputWin()
-  if !exists("g:RspecSplitHorizontal")
-    let g:RspecSplitHorizontal=1
-  endif
-
-  let splitLocation = "botright "
-  let splitSize = 15
-
-  if bufexists('RSpecOutput')
-    silent! bw! RSpecOutput
-  end
-
-  if g:RspecSplitHorizontal == 1
-    silent! exec splitLocation . ' ' . splitSize .  ' new'
-  else
-    silent! exec splitLocation . ' ' . splitSize . ' vnew'
-  end
-  silent! exec "edit RSpecOutput"
-endfunction
-
 function! s:RunSpecMain(type)
   let l:bufn = expand("%:p")
   let s:SpecFile = l:bufn
 
-  if len(s:hpricot_cmd)<1
-    let s:hpricot_cmd = s:find_hpricot()
-    let s:hpricot = match(s:hpricot_cmd,'true')>=0
-  end
-
-  if !s:hpricot
-    call s:error_msg("You need the hpricot gem to run this script.")
-    return
-  end
+  call s:check_nokogiri()
 
   " find the installed rspec command
   let l:default_cmd = ""
@@ -176,6 +119,21 @@ function! s:RunSpecMain(type)
 
 endfunction
 
+function! s:createOutputWin()
+  let isSplitHorizontal = s:fetch("RspecSplitHorizontal", 1)
+  let splitDirCommand = isSplitHorizontal == 1 ? 'new' : 'vnew'
+
+  let splitLocation = "botright "
+  let splitSize = 15
+
+  if bufexists('RSpecOutput')
+    silent! bw! RSpecOutput
+  end
+
+  silent! exec splitLocation . ' ' . splitSize .  ' ' . splitDirCommand
+  silent! exec "edit RSpecOutput"
+endfunction
+
 function! s:FindWindowByBufferName(buffername)
   let l:windowNumberToBufnameList = map(range(1, winnr('$')), '[v:val, bufname(winbufnr(v:val))]')
   let l:arrayIndex = match(l:windowNumberToBufnameList, a:buffername)
@@ -209,6 +167,40 @@ function! s:TryToOpen()
   " that was already open, or in the current win
   exec "e ".substitute(l:tokens[0],'/^\s\+',"","")
   call cursor(l:tokens[1],1)
+endfunction
+
+"==============
+" Checks `nokogiri` gem availability
+function! s:check_nokogiri()
+  let s:nokogiri = s:find_nokogiri()
+  let s:nokogiri = match(s:nokogiri,'true') >= 0
+  if !s:nokogiri
+    throw("You need the `nokogiri` gem to run this script.")
+  end
+endfunction
+
+function! s:find_nokogiri()
+  return system("( gem search -i nokogiri &> /dev/null && echo true )")
+endfunction
+
+function! s:error_msg(msg)
+  echohl ErrorMsg
+  echo a:msg
+  echohl None
+endfunction
+
+function! s:notice_msg(msg)
+  echohl MoreMsg
+  echo a:msg
+  echohl None
+endfunction
+
+function! s:fetch(varname, default)
+  if exists("g:".a:varname)
+    return eval("g:".a:varname)
+  else
+    return a:default
+  endif
 endfunction
 
 function! RunSpec()
