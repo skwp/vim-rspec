@@ -1,5 +1,5 @@
 function! vim_rspec#win_cmd#create_output_win()
-  let isSplitHorizontal = g:FetchVar("RspecSplitHorizontal", 1)
+  let isSplitHorizontal = vim_rspec#helpers#fetch_var("RspecSplitHorizontal", 1)
   let splitDirCommand = isSplitHorizontal == 1 ? 'new' : 'vnew'
 
   let splitLocation = "botright "
@@ -35,6 +35,11 @@ endfunction
 "======
 " Local functions
 "======
+function! s:SwitchToWindowByName(buffername)
+  let l:windowNumber = s:FindWindowByBufferName(a:buffername)
+  call s:SwitchToWindowNumber(l:windowNumber)
+endfunction
+
 function! s:FindWindowByBufferName(buffername)
   let l:windowNumberToBufnameList = map(range(1, winnr('$')), '[v:val, bufname(winbufnr(v:val))]')
   let l:arrayIndex = match(l:windowNumberToBufnameList, a:buffername)
@@ -46,8 +51,4 @@ function! s:SwitchToWindowNumber(number)
   exe a:number . "wincmd w"
 endfunction
 
-function! s:SwitchToWindowByName(buffername)
-  let l:windowNumber = s:FindWindowByBufferName(a:buffername)
-  call s:SwitchToWindowNumber(l:windowNumber)
-endfunction
 
