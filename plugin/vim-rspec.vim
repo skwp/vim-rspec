@@ -15,66 +15,61 @@
 "   * g:RspecOpts            :: Opts to send to rspec call
 "   * g:RspecSplitHorizontal :: Set to 0 to cause Vertical split (default:1)
 
-let s:helper_dir = expand("<sfile>:h")
+let s:plugin_dir = expand("<sfile>:h")
 
 if !exists("g:RspecKeymap")
   let g:RspecKeymap=1
 end
 
-runtime! plugin/sources/helpers.vim
-runtime! plugin/sources/win_cmd.vim
+execute "source " . s:plugin_dir . "/vim_rspec/helpers.vim"
+execute "source " . s:plugin_dir . "/vim_rspec/win_cmd.vim"
 
 function! s:RunSpecMain(type)
   let l:bufn = expand("%:p")
   let s:SpecFile = l:bufn
 
-  call g:CheckNokogiri()
+  call vim_rspec#helpers#check_nokogiri()
 
   " find the installed rspec command
-  let l:default_cmd = ""
-  if executable("spec")==1
-    let l:default_cmd = "spec"
-  elseif executable("rspec")==1
-    let l:default_cmd = "rspec"
-  end
+  let l:default_cmd = vim_rspec#helpers#find_rspec_executable()
 
   " filter
-  let l:filter = "ruby ". g:FetchVar("RspecRBPath", s:helper_dir."/vim-rspec.rb")
+  let l:filter = vim_rspec#helpers#build_filter_command(s:plugin_dir)
 
   " run just the current file
   if a:type=="file"
     if match(l:bufn,'_spec.rb')>=0
-      call g:NoticeMsg("Running " . s:SpecFile . "...")
-      let l:spec_bin = g:FetchVar("RspecBin",l:default_cmd)
-      let l:spec_opts = g:FetchVar("RspecOpts", "")
+      call vim_rspec#helpers#notice_msg("Running " . s:SpecFile . "...")
+      let l:spec_bin = vim_rspec#helpers#fetch_var("RspecBin",l:default_cmd)
+      let l:spec_opts = vim_rspec#helpers#fetch_var("RspecOpts", "")
       let l:spec = l:spec_bin . " " . l:spec_opts . " -f h " . l:bufn
     else
-      call g:ErrorMsg("Seems ".l:bufn." is not a *_spec.rb file")
+      call vim_rspec#helpers#error_msg("Seems ".l:bufn." is not a *_spec.rb file")
       return
     end
   elseif a:type=="line"
     if match(l:bufn,'_spec.rb')>=0
       let l:current_line = line('.')
 
-      call g:NoticeMsg("Running Line " . l:current_line . " on " . s:SpecFile . " ")
-      let l:spec_bin = g:FetchVar("RspecBin",l:default_cmd)
-      let l:spec_opts = g:FetchVar("RspecOpts", "")
+      call vim_rspec#helpers#notice_msg("Running Line " . l:current_line . " on " . s:SpecFile . " ")
+      let l:spec_bin = vim_rspec#helpers#fetch_var("RspecBin",l:default_cmd)
+      let l:spec_opts = vim_rspec#helpers#fetch_var("RspecOpts", "")
       let l:spec = l:spec_bin . " " . l:spec_opts . " -l " . l:current_line . " -f h " . l:bufn
     else
-      call g:ErrorMsg("Seems ".l:bufn." is not a *_spec.rb file")
+      call vim_rspec#helpers#error_msg("Seems ".l:bufn." is not a *_spec.rb file")
       return
     end
   elseif a:type=="rerun"
     if exists("s:spec")
       let l:spec = s:spec
     else
-      call g:ErrorMsg("No rspec run to repeat")
+      call vim_rspec#helpers#error_msg("No rspec run to repeat")
       return
     end
   else
     let l:dir = expand("%:p:h")
     if isdirectory(l:dir."/spec")>0
-      call g:NoticeMsg("Running spec on the spec directory ...")
+      call vim_rspec#helpers#notice_msg("Running spec on the spec directory ...")
     else
       " try to find a spec directory on the current path
       let l:tokens = split(l:dir,"/")
@@ -88,17 +83,17 @@ function! s:RunSpecMain(type)
         end
       endfor
       if len(l:dir)>0
-        call g:NoticeMsg("Running spec with on the spec directory found (".l:dir.") ...")
+        call vim_rspec#helpers#notice_msg("Running spec with on the spec directory found (".l:dir.") ...")
       else
-        call g:ErrorMsg("No ".l:dir."/spec directory found")
+        call vim_rspec#helpers#error_msg("No ".l:dir."/spec directory found")
         return
       end
     end
     if isdirectory(l:dir)<0
-      call g:ErrorMsg("Could not find the ".l:dir." directory.")
+      call vim_rspec#helpers#error_msg("Could not find the ".l:dir." directory.")
       return
     end
-    let l:spec = g:FetchVar("RspecBin", l:default_cmd) . g:FetchVar("RspecOpts", "")
+    let l:spec = vim_rspec#helpers#fetch_var("RspecBin", l:default_cmd) . vim_rspec#helpers#fetch_var("RspecOpts", "")
     let l:spec = l:spec . " -f h " . l:dir . " -p **/*_spec.rb"
   end
   let s:spec = l:spec
