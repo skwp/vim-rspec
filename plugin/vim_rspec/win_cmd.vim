@@ -1,4 +1,4 @@
-function! g:CreateOutputWin()
+function! vim_rspec#win_cmd#create_output_win()
   let isSplitHorizontal = g:FetchVar("RspecSplitHorizontal", 1)
   let splitDirCommand = isSplitHorizontal == 1 ? 'new' : 'vnew'
 
@@ -13,23 +13,7 @@ function! g:CreateOutputWin()
   silent! exec "edit RSpecOutput"
 endfunction
 
-function! s:FindWindowByBufferName(buffername)
-  let l:windowNumberToBufnameList = map(range(1, winnr('$')), '[v:val, bufname(winbufnr(v:val))]')
-  let l:arrayIndex = match(l:windowNumberToBufnameList, a:buffername)
-  let l:windowNumber = windowNumberToBufnameList[l:arrayIndex][0]
-  return l:windowNumber
-endfunction
-
-function! s:SwitchToWindowNumber(number)
-  exe a:number . "wincmd w"
-endfunction
-
-function! s:SwitchToWindowByName(buffername)
-  let l:windowNumber = s:FindWindowByBufferName(a:buffername)
-  call s:SwitchToWindowNumber(l:windowNumber)
-endfunction
-
-function! g:TryToOpen()
+function! vim_rspec#win_cmd#try_to_open()
   " Search up to find '*_spec.rb'
   call search("_spec","bcW")
   let l:line = getline(".")
@@ -46,5 +30,24 @@ function! g:TryToOpen()
   " that was already open, or in the current win
   exec "e ".substitute(l:tokens[0],'/^\s\+',"","")
   call cursor(l:tokens[1],1)
+endfunction
+
+"======
+" Local functions
+"======
+function! s:FindWindowByBufferName(buffername)
+  let l:windowNumberToBufnameList = map(range(1, winnr('$')), '[v:val, bufname(winbufnr(v:val))]')
+  let l:arrayIndex = match(l:windowNumberToBufnameList, a:buffername)
+  let l:windowNumber = windowNumberToBufnameList[l:arrayIndex][0]
+  return l:windowNumber
+endfunction
+
+function! s:SwitchToWindowNumber(number)
+  exe a:number . "wincmd w"
+endfunction
+
+function! s:SwitchToWindowByName(buffername)
+  let l:windowNumber = s:FindWindowByBufferName(a:buffername)
+  call s:SwitchToWindowNumber(l:windowNumber)
 endfunction
 

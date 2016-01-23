@@ -102,13 +102,13 @@ function! s:RunSpecMain(type)
   let s:cmd  = l:spec." | ".l:filter
 
   "put the result on a new buffer
-  call g:CreateOutputWin()
+  call vim_rspec#win_cmd#create_output_win()
   setl buftype=nofile
   silent exec "r! ".s:cmd
   setl syntax=vim-rspec
-  silent exec "nnoremap <buffer> <cr> :call <SID>TryToOpen()<cr>"
-  silent exec 'nnoremap <silent> <buffer> n /\/.*spec.*\:<cr>:call <SID>TryToOpen()<cr>'
-  silent exec 'nnoremap <silent> <buffer> N ?/\/.*spec.*\:<cr>:call <SID>TryToOpen()<cr>'
+  silent exec "nnoremap <buffer> <cr> :call <SID>vim_rspec#win_cmd#try_to_open()<cr>"
+  silent exec 'nnoremap <silent> <buffer> n /\/.*spec.*\:<cr>:call <SID>vim_rspec#win_cmd#try_to_open()<cr>'
+  silent exec 'nnoremap <silent> <buffer> N ?/\/.*spec.*\:<cr>:call <SID>vim_rspec#win_cmd#try_to_open()<cr>'
   silent exec "nnoremap <buffer> q :q<CR>:wincmd p<CR>"
   setl nolist
   setl foldmethod=expr
