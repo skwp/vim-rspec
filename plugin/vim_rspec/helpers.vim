@@ -38,12 +38,12 @@ endfunction
 function! vim_rspec#helpers#build_filter_command(plugin_dir)
   let default_filter_cmd = a:plugin_dir . "/vim-rspec.rb"
   let rb_path = vim_rspec#helpers#fetch_var("RspecRBPath", default_filter_cmd)
-  return "ruby" . db_path
+  return "ruby" . rb_path
 endfunction
 
 "======
 " Local functions
 "======
 function! s:find_nokogiri()
-  return system("( gem search -i nokogiri &> /dev/null && echo true )")
+  return system("gem search -i nokogiri &> /dev/null && echo true")
 endfunction

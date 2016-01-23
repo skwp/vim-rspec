@@ -34,16 +34,13 @@ function! s:RunSpecMain(type)
   let l:default_cmd = vim_rspec#helpers#find_rspec_executable()
 
   " run just the current file
-  if a:type=="file"
-    if match(l:bufn,'_spec.rb')>=0
-      call vim_rspec#helpers#notice_msg("Running " . s:SpecFile . "...")
-      let l:spec_bin = vim_rspec#helpers#fetch_var("RspecBin", l:default_cmd)
-      let l:spec_opts = vim_rspec#helpers#fetch_var("RspecOpts", "")
-      let l:spec = l:spec_bin . " " . l:spec_opts . " -f h " . l:bufn
-    else
-      call vim_rspec#helpers#error_msg("Seems ".l:bufn." is not a *_spec.rb file")
+  if a:type == "file"
+    try
+      let l:spec = vim_rspec#runners#file()
+    catch /^Seems/
+      call vim_rspec#helpers#error_msg(v:exception)
       return
-    end
+    endtry
   elseif a:type=="line"
     if match(l:bufn,'_spec.rb')>=0
       let l:current_line = line('.')
