@@ -33,14 +33,11 @@ function! s:RunSpecMain(type)
   " find the installed rspec command
   let l:default_cmd = vim_rspec#helpers#find_rspec_executable()
 
-  " filter
-  let l:filter = vim_rspec#helpers#build_filter_command(s:plugin_dir)
-
   " run just the current file
   if a:type=="file"
     if match(l:bufn,'_spec.rb')>=0
       call vim_rspec#helpers#notice_msg("Running " . s:SpecFile . "...")
-      let l:spec_bin = vim_rspec#helpers#fetch_var("RspecBin",l:default_cmd)
+      let l:spec_bin = vim_rspec#helpers#fetch_var("RspecBin", l:default_cmd)
       let l:spec_opts = vim_rspec#helpers#fetch_var("RspecOpts", "")
       let l:spec = l:spec_bin . " " . l:spec_opts . " -f h " . l:bufn
     else
@@ -99,6 +96,8 @@ function! s:RunSpecMain(type)
   let s:spec = l:spec
 
   " run the spec command
+  let l:filter = vim_rspec#helpers#build_filter_command(s:plugin_dir)
+
   let s:cmd  = l:spec." | ".l:filter
 
   "put the result on a new buffer
