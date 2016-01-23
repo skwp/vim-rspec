@@ -41,19 +41,14 @@ function! s:RunSpecMain(type)
       call vim_rspec#helpers#error_msg(v:exception)
       return
     endtry
-  elseif a:type=="line"
-    if match(l:bufn,'_spec.rb')>=0
-      let l:current_line = line('.')
-
-      call vim_rspec#helpers#notice_msg("Running Line " . l:current_line . " on " . s:SpecFile . " ")
-      let l:spec_bin = vim_rspec#helpers#fetch_var("RspecBin",l:default_cmd)
-      let l:spec_opts = vim_rspec#helpers#fetch_var("RspecOpts", "")
-      let l:spec = l:spec_bin . " " . l:spec_opts . " -l " . l:current_line . " -f h " . l:bufn
-    else
-      call vim_rspec#helpers#error_msg("Seems ".l:bufn." is not a *_spec.rb file")
+  elseif a:type == "line"
+    try
+      let l:spec = vim_rspec#runners#line()
+    catch /^Seems/
+      call vim_rspec#helpers#error_msg(v:exception)
       return
-    end
-  elseif a:type=="rerun"
+    endtry
+  elseif a:type == "rerun"
     if exists("s:spec")
       let l:spec = s:spec
     else
