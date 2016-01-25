@@ -7,10 +7,11 @@ require File.join(File.dirname(__FILE__), "lib/context_renderer")
 require File.join(File.dirname(__FILE__), "lib/rspec_test_result")
 
 class RSpecOutputHandler
+  attr_reader :test_result
 
-  def initialize(doc)
-    @doc = doc
-    @counts={
+  def initialize(test_result)
+    @test_result = test_result
+    @counts = {
       passed: 0,
       failed: 0,
       not_implemented: 0
@@ -25,23 +26,15 @@ class RSpecOutputHandler
   private
 
   def render_header
-    stats = (@doc/"script").select {|script| script.innerHTML =~ /duration|totals/ }
-    stats.map! do |script|
-      script.inner_html.scan(/".*"/).first.gsub(/<\/?strong>/,"").gsub(/\"/,'')
-    end
-    # results in ["Finished in 0.00482 seconds", "2 examples, 1 failure"]
-    failure_success_messages, other_stats = stats.partition {|stat| stat =~ /failure/}
-    render_red_green_header(failure_success_messages.first)
-    other_stats.each do |stat|
-      puts stat
-    end
+    render_red_green_header
+    puts test_result.duration_str
     puts " "
   end
 
-  def render_red_green_header(failure_success_messages)
-    total_count = failure_success_messages.match(/(\d+) example/)[1].to_i rescue 0
-    fail_count = failure_success_messages.match(/(\d+) failure/)[1].to_i rescue 0
-    pending_count = failure_success_messages.match(/(\d+) pending/)[1].to_i rescue 0
+  def render_red_green_header
+    total_count = test_result.examples_count
+    fail_count = test_result.failure_count
+    pending_count = test_result.pending_count
 
     if fail_count > 0
       puts "------------------------------"
@@ -63,4 +56,6 @@ class RSpecOutputHandler
 
 end
 
-RSpecOutputHandler.new(Hpricot(STDIN.read)).render
+test_result = RspecTestResult.new(STDIN.read)
+
+RSpecOutputHandler.new(test_result).render
