@@ -1,9 +1,5 @@
 $TESTING=true
 
-# require File.join(File.dirname(__FILE__), '../plugin/vim-rspec.rb')
-
-
-# require 'vim-rspec'
 require 'rspec/its'
 require 'pry-nav'
 

@@ -7,7 +7,6 @@
 class RSpecContextRenderer
   attr_reader :example_group
 
-  CLASSES = {"passed"=>"+","failed"=>"-","not_implemented"=>"#"}
 
   def initialize(example_group)
     @example_group = example_group
@@ -26,17 +25,13 @@ class RSpecContextRenderer
   end
 
   def render_specs
-    example_group.eaxmples.each do |example|
+    example_group.examples.each do |example|
       render_spec_descriptor(example)
-    end
-    (example_group/"dd").each do |dd|
-      FailureRenderer.new(dd/"div[@class~='failure']") if dd[:class] =~ /failed/
+      FailureRenderer.new(example).render if example.failure?
     end
   end
 
   def render_spec_descriptor(example)
-    txt = (dd/"span:first").inner_html
-    clazz = dd[:class].gsub(/(?:example|spec) /,'')
-    puts "#{CLASSES[clazz]} #{txt}"
+    puts "#{example.status_sign} #{example.header_text}"
   end
 end

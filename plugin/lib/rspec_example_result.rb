@@ -4,10 +4,16 @@ require_relative './string_util.rb'
 class RspecExampleResult
   include ::StringUtil
 
+  CLASSES_TO_SIGN_MAPPING = {"passed"=>"+","failed"=>"-","not_implemented"=>"#"}
+
   attr_reader :context
 
   def initialize(context)
     @context = context
+  end
+
+  def failure?
+    context['class'] =~ /failed/
   end
 
   def header_text
@@ -19,9 +25,8 @@ class RspecExampleResult
   end
 
   def failure_message
-    prepared_inner_html = context.css('div.message > pre').first.inner_html
+    context.css('div.message > pre').first.inner_html
       .gsub(/\n/,'').gsub(/\s+/,' ')
-    unescape(prepared_inner_html)
   end
 
   def failure_location
@@ -30,12 +35,17 @@ class RspecExampleResult
         "#{indent(line.strip)}"
       end.join("\n")
     )
+    context.css('div.backtrace > pre').first.inner_html
   end
 
   def backtrace_lines
     context.css('pre.ruby > code').first.inner_html
       .scan(/(<span class="linenum">)(\d+)(<\/span>)(.*)/)
       .reject { |line| line[3] =~ ignore_line_if_matches }
+  end
+
+  def status_sign
+    CLASSES_TO_SIGN_MAPPING[html_class]
   end
 
   private

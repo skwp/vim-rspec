@@ -4,6 +4,8 @@ require 'cgi'
 require File.join(File.dirname(__FILE__), "lib/string_util")
 require File.join(File.dirname(__FILE__), "lib/failure_renderer")
 require File.join(File.dirname(__FILE__), "lib/rspec_context_renderer")
+require File.join(File.dirname(__FILE__), "lib/rspec_example_result")
+require File.join(File.dirname(__FILE__), "lib/rspec_example_group_result")
 require File.join(File.dirname(__FILE__), "lib/rspec_test_result")
 
 class RSpecOutputHandler
@@ -45,7 +47,6 @@ class RSpecOutputHandler
       puts "+ PASS: All #{total_count} Specs Pass!"
       puts "++++++++++++++++++++++++++++++"
     end
-
   end
 
   def render_examples
@@ -53,7 +54,6 @@ class RSpecOutputHandler
       RSpecContextRenderer.new(example_group).render
     end
   end
-
 end
 
 test_result = RspecTestResult.new(STDIN.read)
