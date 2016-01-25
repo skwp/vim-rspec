@@ -29,4 +29,14 @@ describe RspecTestResult do
       expect(result.pending_count).to eq 0
     end
   end
+
+  describe '#example_groups' do
+    it 'returns proper number of example groups' do
+      expect(result.example_groups.count).to eq 12
+    end
+
+    it 'returns wrapped example groups' do
+      expect(result.example_groups.first).to be_kind_of(RspecExampleGroupResult)
+    end
+  end
 end

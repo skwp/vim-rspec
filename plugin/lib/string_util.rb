@@ -6,4 +6,8 @@ module StringUtil
   def unescape(html)
     CGI.unescapeHTML(html)
   end
+
+  def indent(msg)
+    "  #{msg}"
+  end
 end

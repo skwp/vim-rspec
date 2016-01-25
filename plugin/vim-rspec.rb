@@ -3,7 +3,7 @@ require "nokogiri"
 require 'cgi'
 require File.join(File.dirname(__FILE__), "lib/string_util")
 require File.join(File.dirname(__FILE__), "lib/failure_renderer")
-require File.join(File.dirname(__FILE__), "lib/context_renderer")
+require File.join(File.dirname(__FILE__), "lib/rspec_context_renderer")
 require File.join(File.dirname(__FILE__), "lib/rspec_test_result")
 
 class RSpecOutputHandler
@@ -49,8 +49,8 @@ class RSpecOutputHandler
   end
 
   def render_examples
-    (@doc/"div[@class~='example_group']").each do |context|
-      RSpecContextRenderer.new(context, @counts)
+    test_result.example_groups.each do |example_group|
+      RSpecContextRenderer.new(example_group).render
     end
   end
 

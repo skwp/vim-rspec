@@ -1,0 +1,34 @@
+<div id="div_group_1" class="example_group passed">
+  <dl style="margin-left: 0px;">
+  <dt id="example_group_1" class="passed">EmptyUser</dt>
+    <script type="text/javascript">moveProgressBar('6.6');</script>
+    <dd class="example passed"><span class="passed_spec_name">should respond to #guest?</span><span class='duration'>0.00322s</span></dd>
+    <script type="text/javascript">makeRed('rspec-header');</script>
+    <script type="text/javascript">makeRed('div_group_1');</script>
+    <script type="text/javascript">makeRed('example_group_1');</script>
+    <script type="text/javascript">moveProgressBar('13.3');</script>
+    <dd class="example failed">
+      <span class="failed_spec_name">should respond to #forget_me2!</span>
+      <span class="duration">0.02465s</span>
+      <div class="failure" id="failure_1">
+        <div class="message"><pre>expected #&lt;EmptyUser:0x007f95646fdaf0 @role=&quot;guest&quot;, @id=0&gt; to respond to :forget_me2!</pre></div>
+        <div class="backtrace"><pre>./spec/app/core/empty_user_spec.rb:18:in `block (2 levels) in &lt;top (required)&gt;&#39;</pre></div>
+    <pre class="ruby"><code><span class="linenum">16</span>  <span class="keyword">end</span>
+<span class="linenum">17</span>
+<span class="offending"><span class="linenum">18</span>  it { is_expected.to respond_to <span class="symbol">:forget_me2!</span> }</span>
+<span class="linenum">19</span>  it { is_expected.to respond_to <span class="symbol">:force_forget_me!</span> }
+<span class="linenum">20</span><span class="keyword">end</span></code></pre>
+      </div>
+    </dd>
+    <script type="text/javascript">moveProgressBar('20.0');</script>
+    <dd class="example passed"><span class="passed_spec_name">should respond to #admin?</span><span class='duration'>0.00176s</span></dd>
+    <script type="text/javascript">moveProgressBar('26.6');</script>
+    <dd class="example passed"><span class="passed_spec_name">should respond to #force_forget_me!</span><span class='duration'>0.00126s</span></dd>
+    <script type="text/javascript">moveProgressBar('33.3');</script>
+    <dd class="example passed"><span class="passed_spec_name">should respond to #superadmin?</span><span class='duration'>0.00104s</span></dd>
+    <script type="text/javascript">moveProgressBar('40.0');</script>
+    <dd class="example passed"><span class="passed_spec_name">should respond to #moderator?</span><span class='duration'>0.00098s</span></dd>
+    <script type="text/javascript">moveProgressBar('46.6');</script>
+    <dd class="example passed"><span class="passed_spec_name">should respond to #member?</span><span class='duration'>0.00095s</span></dd>
+  </dl>
+</div>

@@ -12,18 +12,14 @@ class FailureRenderer
 
   private
 
-  def indent(msg)
-    "  #{msg}"
+  def failure_message
+    indent(unescape((@failure/"div[@class~='message']/pre").inner_html.gsub(/\n/,'').gsub(/\s+/,' ')))
   end
 
   def failure_location
     unescape(
       (@failure/"div[@class='backtrace']/pre").inner_html.split("\n").map { |line| "#{indent(line.strip)}" }.join("\n")
     )
-  end
-
-  def failure_message
-    indent(unescape((@failure/"div[@class~='message']/pre").inner_html.gsub(/\n/,'').gsub(/\s+/,' ')))
   end
 
   def backtrace_details

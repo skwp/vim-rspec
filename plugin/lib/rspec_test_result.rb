@@ -1,4 +1,5 @@
 require 'nokogiri'
+require_relative 'rspec_example_group_result'
 
 class RspecTestResult
   attr_reader :html, :doc
@@ -22,6 +23,12 @@ class RspecTestResult
 
   def pending_count
     fetch_counts_str.match(/(\d+) pending/)[1].to_i rescue 0
+  end
+
+  def example_groups
+    doc.css('div.example_group').map do |context|
+      RspecExampleGroupResult.new(context)
+    end
   end
 
   private
