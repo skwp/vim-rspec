@@ -35,7 +35,7 @@ class RSpecOutputHandler
 
   def render_red_green_header
     total_count = test_result.examples_count
-    fail_count = test_result.failure_count
+    fail_count = test_result.failures_count
     pending_count = test_result.pending_count
 
     if fail_count > 0

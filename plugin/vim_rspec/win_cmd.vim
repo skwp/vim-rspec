@@ -13,18 +13,18 @@ function! vim_rspec#win_cmd#create_output_win()
   silent! exec "edit RSpecOutput"
 endfunction
 
-function! vim_rspec#win_cmd#try_to_open()
+function! vim_rspec#win_cmd#try_to_open(spec_file)
   " Search up to find '*_spec.rb'
   call search("_spec","bcW")
   let l:line = getline(".")
   if match(l:line,'^  .*_spec.rb')<0
-    call g:ErrorMsg("No spec file found.")
+    call vim_rspec#helpers#error_msg("No spec file found.")
     return
   end
   let l:tokens = split(l:line,":")
 
   " move back to the other window, if available
-  call s:SwitchToWindowByName(s:SpecFile)
+  call s:SwitchToWindowByName(a:spec_file)
 
   " open the file in question (either in the split)
   " that was already open, or in the current win

@@ -38,7 +38,7 @@ endfunction
 function! vim_rspec#helpers#build_filter_command(plugin_dir)
   let default_filter_cmd = a:plugin_dir . "/vim-rspec.rb"
   let rb_path = vim_rspec#helpers#fetch_var("RspecRBPath", default_filter_cmd)
-  return "ruby" . rb_path
+  return "ruby " . rb_path
 endfunction
 
 "======
