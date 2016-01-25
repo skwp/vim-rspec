@@ -13,6 +13,7 @@ class RSpecContextRenderer
 
   private
   def render_context_header
+
     puts "[#{(@context/"dl/dt").inner_html}]"
   end
 

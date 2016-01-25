@@ -1,4 +1,5 @@
-# -*- encoding : utf-8 -*-
+require_relative 'string_util'
+
 class FailureRenderer
   include StringUtil
 

@@ -1,20 +1,23 @@
 # -*- encoding : utf-8 -*-
-require "rubygems"
-require "hpricot"
+require "nokogiri"
 require 'cgi'
-require "#{File.join(File.dirname(__FILE__), "lib/string_util")}"
-require "#{File.join(File.dirname(__FILE__), "lib/failure_renderer")}"
-require "#{File.join(File.dirname(__FILE__), "lib/context_renderer")}"
+require File.join(File.dirname(__FILE__), "lib/string_util")
+require File.join(File.dirname(__FILE__), "lib/failure_renderer")
+require File.join(File.dirname(__FILE__), "lib/context_renderer")
+require File.join(File.dirname(__FILE__), "lib/rspec_test_result")
 
 class RSpecOutputHandler
 
   def initialize(doc)
-    @doc=doc
+    @doc = doc
     @counts={
-      :passed => 0,
-      :failed => 0,
-      :not_implemented => 0
+      passed: 0,
+      failed: 0,
+      not_implemented: 0
     }
+  end
+
+  def render
     render_header
     render_examples
   end
@@ -27,7 +30,7 @@ class RSpecOutputHandler
       script.inner_html.scan(/".*"/).first.gsub(/<\/?strong>/,"").gsub(/\"/,'')
     end
     # results in ["Finished in 0.00482 seconds", "2 examples, 1 failure"]
-    failure_success_messages,other_stats = stats.partition {|stat| stat =~ /failure/}
+    failure_success_messages, other_stats = stats.partition {|stat| stat =~ /failure/}
     render_red_green_header(failure_success_messages.first)
     other_stats.each do |stat|
       puts stat
@@ -60,4 +63,4 @@ class RSpecOutputHandler
 
 end
 
-renderer = RSpecOutputHandler.new(Hpricot(STDIN.read))
+RSpecOutputHandler.new(Hpricot(STDIN.read)).render
