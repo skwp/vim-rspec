@@ -16,7 +16,7 @@ INSTALL
 -------
  * Requires: gem install hpricot
  * Install with pathogen: clone/submodule into vim/bundle
- * **rbenv** users will need to install hpricot using system ruby `RBENV_VERSION=system sudo gem install hpricot`
+ * **rbenv** users will need to install hpricot using system ruby `sudo RBENV_VERSION=system gem install hpricot`
 
 USAGE
 -----
