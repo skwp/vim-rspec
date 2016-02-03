@@ -1,0 +1,13 @@
+<dd class="example failed">
+<span class="failed_spec_name">should respond to #forget_me2!</span>
+<span class="duration">0.02465s</span>
+<div class="failure" id="failure_1">
+  <div class="message"><pre>expected #&lt;EmptyUser:0x007f95646fdaf0 @role=&quot;guest&quot;, @id=0&gt; to respond to :forget_me2!</pre></div>
+    <div class="backtrace"><pre>./spec/app/core/empty_user_spec.rb:18:in `block (2 levels) in &lt;top (required)&gt;&#39;</pre></div>
+      <pre class="ruby"><code><span class="linenum">16</span>  <span class="keyword">end</span>
+<span class="linenum">17</span>
+<span class="offending"><span class="linenum">18</span>  it { is_expected.to respond_to <span class="symbol">:forget_me2!</span> }</span>
+<span class="linenum">19</span>  it { is_expected.to respond_to <span class="symbol">:force_forget_me!</span> }
+<span class="linenum">20</span><span class="keyword">end</span></code></pre>
+</div>
+</dd>
