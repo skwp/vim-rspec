@@ -31,7 +31,7 @@ Added into `~/.vimrc` the following line:
 ```
 call plug#begin('~/.vim/plugged')
 
-Plug 'alterego-labs/vim-rspec'
+Plug '<path-to-repo>'
 
 call plug#end()
 ```
