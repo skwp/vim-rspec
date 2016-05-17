@@ -114,7 +114,7 @@ function! s:RunSpecMain(type)
       call s:notice_msg("Running Line " . l:current_line . " on " . s:SpecFile . " ")
       let l:spec_bin = s:fetch("RspecBin",l:default_cmd)
       let l:spec_opts = s:fetch("RspecOpts", "")
-      let l:spec = l:spec_bin . " " . l:spec_opts . " -l " . l:current_line . " -f h " . l:bufn
+      let l:spec = l:spec_bin . " " . l:spec_opts . " -f h " . l:bufn . ":" . l:current_line
     else
       call s:error_msg("Seems ".l:bufn." is not a *_spec.rb file")
       return
